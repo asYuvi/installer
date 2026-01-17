@@ -1,0 +1,33 @@
+# Zig 构建产物
+zig-out/
+zig-cache/
+.zig-cache/
+
+# 构建目录
+build/
+output/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+
+# 下载的临时文件
+downloads/
+tmp/
+
+# 测试覆盖率
+coverage/
+
+# 日志
+*.log
+
+# 签名密钥（不提交）
+keys/*.key
+keys/*.pub
+!keys/.gitkeep

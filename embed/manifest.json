@@ -1,0 +1,329 @@
+{
+  "version": "1.0.0",
+  "schema_version": "2.0",
+  "created_at": "2026-01-17T12:00:00Z",
+  "signature": "PLACEHOLDER_WILL_BE_SIGNED",
+
+  "installer": {
+    "min_version": "2.0.0",
+    "recommended_version": "2.0.0"
+  },
+
+  "asyuvi": {
+    "version": "0.12.1",
+    "release_date": "2026-01-17",
+    "changelog_url": "https://github.com/xbits/asYuvi/releases/tag/v0.12.1",
+
+    "artifacts": {
+      "darwin_arm64": {
+        "url": "https://github.com/xbits/asYuvi/releases/download/v0.12.1/asYuvi-0.12.1-darwin-arm64.tar.gz",
+        "mirrors": [
+          "https://ghproxy.com/https://github.com/xbits/asYuvi/releases/download/v0.12.1/asYuvi-0.12.1-darwin-arm64.tar.gz"
+        ],
+        "size": 52428800,
+        "sha256": "PLACEHOLDER_UPDATE_WITH_ACTUAL_HASH",
+        "install_path": "$HOME/.asyuvi"
+      },
+      "darwin_x86_64": {
+        "url": "https://github.com/xbits/asYuvi/releases/download/v0.12.1/asYuvi-0.12.1-darwin-x86_64.tar.gz",
+        "mirrors": [
+          "https://ghproxy.com/https://github.com/xbits/asYuvi/releases/download/v0.12.1/asYuvi-0.12.1-darwin-x86_64.tar.gz"
+        ],
+        "size": 52428800,
+        "sha256": "PLACEHOLDER_UPDATE_WITH_ACTUAL_HASH",
+        "install_path": "$HOME/.asyuvi"
+      },
+      "linux_x86_64": {
+        "url": "https://github.com/xbits/asYuvi/releases/download/v0.12.1/asYuvi-0.12.1-linux-x86_64.tar.gz",
+        "mirrors": [
+          "https://ghproxy.com/https://github.com/xbits/asYuvi/releases/download/v0.12.1/asYuvi-0.12.1-linux-x86_64.tar.gz"
+        ],
+        "size": 52428800,
+        "sha256": "PLACEHOLDER_UPDATE_WITH_ACTUAL_HASH",
+        "install_path": "$HOME/.asyuvi"
+      }
+    }
+  },
+
+  "dependencies": {
+    "lima": {
+      "version": "2.0.3",
+      "required_on": ["darwin"],
+      "description": "Linux virtual machines on macOS",
+
+      "artifacts": {
+        "darwin_arm64": {
+          "url": "https://github.com/lima-vm/lima/releases/download/v2.0.3/lima-2.0.3-Darwin-arm64.tar.gz",
+          "mirrors": [
+            "https://ghproxy.com/https://github.com/lima-vm/lima/releases/download/v2.0.3/lima-2.0.3-Darwin-arm64.tar.gz"
+          ],
+          "size": 23068672,
+          "sha256": "22aee997b44b1ef479bc8b3f3ca2c0c7e0bb6d55fe9c74a0e69a4c742bc0df76",
+          "install_path": "$HOME/.lima"
+        },
+        "darwin_x86_64": {
+          "url": "https://github.com/lima-vm/lima/releases/download/v2.0.3/lima-2.0.3-Darwin-x86_64.tar.gz",
+          "mirrors": [
+            "https://ghproxy.com/https://github.com/lima-vm/lima/releases/download/v2.0.3/lima-2.0.3-Darwin-x86_64.tar.gz"
+          ],
+          "size": 24117248,
+          "sha256": "PLACEHOLDER_UPDATE_WITH_ACTUAL_HASH",
+          "install_path": "$HOME/.lima"
+        }
+      }
+    },
+
+    "alpine_vm": {
+      "version": "3.23.2",
+      "variant": "minimal",
+      "required_on": ["darwin", "linux"],
+      "description": "Alpine Linux minimal VM image for asYuvi",
+
+      "artifacts": {
+        "arm64": {
+          "url": "https://cdn.asyuvi.com/releases/v0.12.1/asyuvi-alpine-arm64-0.12.0-minimal-20260117.tar.gz",
+          "mirrors": [
+            "https://mirrors.tuna.tsinghua.edu.cn/asyuvi/releases/v0.12.1/asyuvi-alpine-arm64-0.12.0-minimal-20260117.tar.gz",
+            "https://ghproxy.com/https://github.com/xbits/asYuvi/releases/download/v0.12.1/asyuvi-alpine-arm64-0.12.0-minimal-20260117.tar.gz"
+          ],
+          "size": 134096813,
+          "sha256": "c29cf0e785b21fb4d40608bb5c3f75f22f1b085a273d48ed4abec23ea06d4f76",
+          "install_path": "$HOME/.asyuvi/vm"
+        },
+        "x86_64": {
+          "url": "https://cdn.asyuvi.com/releases/v0.12.1/asyuvi-alpine-x86_64-0.12.0-minimal-20260117.tar.gz",
+          "mirrors": [
+            "https://mirrors.tuna.tsinghua.edu.cn/asyuvi/releases/v0.12.1/asyuvi-alpine-x86_64-0.12.0-minimal-20260117.tar.gz"
+          ],
+          "size": 140000000,
+          "sha256": "PLACEHOLDER_UPDATE_WITH_ACTUAL_HASH",
+          "install_path": "$HOME/.asyuvi/vm"
+        }
+      },
+
+      "post_install": {
+        "description": "Install required software in Alpine VM",
+        "steps": [
+          {
+            "type": "apk_configure_mirrors",
+            "description": "Configure APK mirrors based on region",
+            "mirrors": {
+              "global": {
+                "main": "https://dl-cdn.alpinelinux.org/alpine/v3.23/main",
+                "community": "https://dl-cdn.alpinelinux.org/alpine/v3.23/community"
+              },
+              "cn": {
+                "main": "https://mirrors.tuna.tsinghua.edu.cn/alpine/v3.23/main",
+                "community": "https://mirrors.tuna.tsinghua.edu.cn/alpine/v3.23/community"
+              }
+            }
+          },
+          {
+            "type": "apk_update",
+            "description": "Update package index",
+            "command": "apk update"
+          },
+          {
+            "type": "apk_install",
+            "description": "Install runtime dependencies",
+            "packages": [
+              "nodejs",
+              "npm",
+              "python3",
+              "py3-pip",
+              "py3-virtualenv",
+              "chromium-headless-shell",
+              "ttf-freefont"
+            ]
+          },
+          {
+            "type": "verify",
+            "description": "Verify installations",
+            "checks": [
+              {
+                "name": "Node.js",
+                "command": "node --version",
+                "expected_pattern": "^v24\\."
+              },
+              {
+                "name": "Python",
+                "command": "python3 --version",
+                "expected_pattern": "Python 3\\.12"
+              },
+              {
+                "name": "Chromium",
+                "command": "chromium-headless-shell --version",
+                "expected_pattern": "Chromium 143"
+              }
+            ]
+          }
+        ]
+      }
+    },
+
+    "podman": {
+      "version": "latest",
+      "required_on": ["linux"],
+      "description": "Container runtime for Linux (alternative to Lima)",
+      "install_method": "system_package_manager",
+      "skip_if_installed": true
+    }
+  },
+
+  "network": {
+    "mirrors": [
+      {
+        "id": "github_global",
+        "name": "GitHub (Global)",
+        "region": "global",
+        "base_url": "https://github.com",
+        "test_url": "https://api.github.com",
+        "priority": 10
+      },
+      {
+        "id": "github_cn_ghproxy",
+        "name": "GitHub Proxy (China)",
+        "region": "cn",
+        "base_url": "https://ghproxy.com/https://github.com",
+        "test_url": "https://ghproxy.com",
+        "priority": 20
+      },
+      {
+        "id": "alpine_global",
+        "name": "Alpine CDN (Global)",
+        "region": "global",
+        "base_url": "https://dl-cdn.alpinelinux.org",
+        "test_url": "https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/x86_64/latest-releases.yaml",
+        "priority": 10
+      },
+      {
+        "id": "alpine_cn_tuna",
+        "name": "Tsinghua Mirror (China)",
+        "region": "cn",
+        "base_url": "https://mirrors.tuna.tsinghua.edu.cn",
+        "test_url": "https://mirrors.tuna.tsinghua.edu.cn/alpine/",
+        "priority": 20
+      },
+      {
+        "id": "alpine_cn_aliyun",
+        "name": "Aliyun Mirror (China)",
+        "region": "cn",
+        "base_url": "https://mirrors.aliyun.com",
+        "test_url": "https://mirrors.aliyun.com/alpine/",
+        "priority": 15
+      }
+    ],
+
+    "connectivity_tests": [
+      {
+        "name": "GitHub API",
+        "url": "https://api.github.com",
+        "timeout_ms": 5000,
+        "required": false
+      },
+      {
+        "name": "asYuvi API",
+        "url": "https://api.asyuvi.com/health",
+        "timeout_ms": 3000,
+        "required": true
+      },
+      {
+        "name": "Alpine CDN",
+        "url": "https://dl-cdn.alpinelinux.org",
+        "timeout_ms": 5000,
+        "required": false
+      }
+    ],
+
+    "proxy": {
+      "auto_detect": true,
+      "sources": [
+        "environment_variables",
+        "system_settings",
+        "config_file"
+      ]
+    }
+  },
+
+  "diagnostics": {
+    "checks": [
+      {
+        "id": "platform_support",
+        "name": "Platform Support",
+        "description": "Check if current platform is supported",
+        "command": "uname -s -m",
+        "severity": "error"
+      },
+      {
+        "id": "disk_space",
+        "name": "Disk Space",
+        "description": "Check available disk space (need at least 2GB)",
+        "command": "df -h $HOME",
+        "severity": "warning",
+        "min_free_gb": 2
+      },
+      {
+        "id": "lima_installed",
+        "name": "Lima Installation",
+        "description": "Check if Lima is installed (macOS only)",
+        "command": "which limactl",
+        "severity": "info",
+        "platforms": ["darwin"]
+      },
+      {
+        "id": "vm_status",
+        "name": "VM Status",
+        "description": "Check if asYuvi VM is running",
+        "command": "limactl list | grep asYuvi",
+        "severity": "info",
+        "platforms": ["darwin"]
+      },
+      {
+        "id": "network_connectivity",
+        "name": "Network Connectivity",
+        "description": "Test network connection",
+        "command": "curl -s -o /dev/null -w '%{http_code}' https://api.asyuvi.com/health",
+        "severity": "warning"
+      },
+      {
+        "id": "proxy_config",
+        "name": "Proxy Configuration",
+        "description": "Check proxy settings",
+        "command": "echo $HTTP_PROXY $HTTPS_PROXY",
+        "severity": "info"
+      }
+    ],
+
+    "auto_fix": {
+      "enabled": true,
+      "fixable_issues": [
+        {
+          "issue": "lima_not_installed",
+          "action": "install_lima",
+          "description": "Automatically install Lima"
+        },
+        {
+          "issue": "vm_not_running",
+          "action": "start_vm",
+          "description": "Start asYuvi VM"
+        },
+        {
+          "issue": "apk_mirrors_not_configured",
+          "action": "configure_apk_mirrors",
+          "description": "Configure APK mirrors based on region"
+        }
+      ]
+    }
+  },
+
+  "telemetry": {
+    "enabled": false,
+    "opt_in_required": true,
+    "endpoints": {
+      "install": "https://api.asyuvi.com/api/v1/telemetry/install",
+      "upgrade": "https://api.asyuvi.com/api/v1/telemetry/upgrade",
+      "error": "https://api.asyuvi.com/api/v1/telemetry/error"
+    },
+    "data_retention_days": 90
+  }
+}
