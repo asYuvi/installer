@@ -2,7 +2,7 @@ const std = @import("std");
 
 /// 解压 tar.gz 文件
 pub fn extractTarGz(allocator: std.mem.Allocator, archive_path: []const u8, dest_dir: []const u8) !void {
-    std.debug.print("解压文件: {s} -> {s}\n", .{ archive_path, dest_dir });
+    std.debug.print("Extracting: {s} -> {s}\n", .{ archive_path, dest_dir });
 
     // 创建目标目录
     try std.fs.cwd().makePath(dest_dir);
@@ -23,11 +23,11 @@ pub fn extractTarGz(allocator: std.mem.Allocator, archive_path: []const u8, dest
     defer allocator.free(result.stderr);
 
     if (result.term.Exited != 0) {
-        std.debug.print("tar 解压失败: {s}\n", .{result.stderr});
+        std.debug.print("tar extraction failed: {s}\n", .{result.stderr});
         return error.ExtractFailed;
     }
 
-    std.debug.print("✓ 解压完成\n", .{});
+    std.debug.print("✓ Extraction complete\n", .{});
 }
 
 /// 创建目录（递归）

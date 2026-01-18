@@ -24,44 +24,48 @@ pub const Downloader = struct {
         return .{ .allocator = allocator };
     }
 
-    /// 下载文件（使用 curl 简化实现）
+    /// Download file (using curl for simplicity)
     pub fn download(self: *Downloader, options: DownloadOptions) !void {
-        std.debug.print("开始下载: {s}\n", .{options.url});
-        std.debug.print("目标路径: {s}\n", .{options.dest_path});
+        std.debug.print("Downloading: {s}\n", .{options.url});
+        std.debug.print("Destination: {s}\n", .{options.dest_path});
 
-        // 创建目标目录
+        // Create destination directory
         const dest_dir = std.fs.path.dirname(options.dest_path) orelse ".";
         try std.fs.cwd().makePath(dest_dir);
 
-        // 使用 curl 下载
-        const result = try std.process.Child.run(.{
-            .allocator = self.allocator,
-            .argv = &[_][]const u8{
+        // Use curl to download
+        var child = std.process.Child.init(
+            &[_][]const u8{
                 "curl",
-                "-L", // 跟随重定向
+                "-L", // Follow redirects
                 "-o",
                 options.dest_path,
                 if (options.show_progress) "-#" else "-s",
                 options.url,
             },
-        });
-        defer self.allocator.free(result.stdout);
-        defer self.allocator.free(result.stderr);
+            self.allocator,
+        );
 
-        if (result.term.Exited != 0) {
-            std.debug.print("下载失败: {s}\n", .{result.stderr});
+        // Inherit stdio to show progress in real-time
+        child.stdout_behavior = .Inherit;
+        child.stderr_behavior = .Inherit;
+
+        const term = try child.spawnAndWait();
+
+        if (term.Exited != 0) {
+            std.debug.print("Download failed\n", .{});
             return error.DownloadFailed;
         }
 
-        std.debug.print("✓ 下载完成\n", .{});
+        std.debug.print("✓ Download complete\n", .{});
 
-        // 验证 SHA256
+        // Verify SHA256
         if (options.expected_sha256) |expected| {
             try self.verifySha256(options.dest_path, expected);
         }
     }
 
-    /// 计算文件的 SHA256
+    /// Calculate file SHA256
     pub fn calculateSha256(self: *Downloader, file_path: []const u8) ![32]u8 {
         _ = self;
         const file = try std.fs.cwd().openFile(file_path, .{});
@@ -81,13 +85,13 @@ pub const Downloader = struct {
         return hash;
     }
 
-    /// 验证 SHA256
+    /// Verify SHA256
     pub fn verifySha256(self: *Downloader, file_path: []const u8, expected_hex: []const u8) !void {
-        std.debug.print("验证 SHA256...\n", .{});
+        std.debug.print("Verifying SHA256...\n", .{});
 
         const actual_hash = try self.calculateSha256(file_path);
 
-        // 将期望的十六进制字符串转换为字节
+        // Convert expected hex string to bytes
         if (expected_hex.len != 64) {
             return error.InvalidSha256;
         }
@@ -95,20 +99,20 @@ pub const Downloader = struct {
         var expected_hash: [32]u8 = undefined;
         _ = try std.fmt.hexToBytes(&expected_hash, expected_hex);
 
-        // 比较哈希
+        // Compare hashes
         if (!std.mem.eql(u8, &actual_hash, &expected_hash)) {
-            std.debug.print("✗ SHA256 校验失败!\n", .{});
-            std.debug.print("期望: {s}\n", .{expected_hex});
-            // 将实际哈希转换为十六进制字符串
+            std.debug.print("✗ SHA256 verification failed!\n", .{});
+            std.debug.print("Expected: {s}\n", .{expected_hex});
+            // Convert actual hash to hex string
             var actual_hex_buf: [64]u8 = undefined;
             for (actual_hash, 0..) |b, i| {
                 _ = std.fmt.bufPrint(actual_hex_buf[i * 2 .. i * 2 + 2], "{x:0>2}", .{b}) catch unreachable;
             }
-            std.debug.print("实际: {s}\n", .{actual_hex_buf});
+            std.debug.print("Actual: {s}\n", .{actual_hex_buf});
             return error.Sha256Mismatch;
         }
 
-        std.debug.print("✓ SHA256 校验通过\n", .{});
+        std.debug.print("✓ SHA256 verified\n", .{});
     }
 };
 

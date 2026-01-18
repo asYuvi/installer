@@ -38,15 +38,15 @@ pub const Installer = struct {
     /// 安装 Lima（仅 macOS）
     pub fn installLima(self: *Installer, version: []const u8) !void {
         if (self.ctx.platform.os != .darwin) {
-            std.debug.print("跳过 Lima 安装（仅 macOS 需要）\n", .{});
+            std.debug.print("Skipping Lima installation (macOS only)\n", .{});
             return;
         }
 
-        std.debug.print("\n=== 安装 Lima v{s} ===\n", .{version});
+        std.debug.print("\n=== Installing Lima v{s} ===\n", .{version});
 
         // 检查是否已安装
         if (self.checkLimaInstalled()) {
-            std.debug.print("Lima 已安装，跳过\n", .{});
+            std.debug.print("Lima already installed, skipping\n", .{});
             return;
         }
 
@@ -81,8 +81,8 @@ pub const Installer = struct {
         try archive.extractTarGz(self.ctx.allocator, archive_path, lima_dir);
 
         // 添加到 PATH（提示用户）
-        std.debug.print("\n✓ Lima 安装完成！\n", .{});
-        std.debug.print("请将以下路径添加到 PATH:\n", .{});
+        std.debug.print("\n✓ Lima installation complete!\n", .{});
+        std.debug.print("Please add to PATH:\n", .{});
         std.debug.print("  export PATH=\"{s}/bin:$PATH\"\n", .{lima_dir});
 
         _ = platform_id;
@@ -90,45 +90,51 @@ pub const Installer = struct {
 
     /// 安装 Alpine VM
     pub fn installAlpineVM(self: *Installer, version: []const u8) !void {
-        std.debug.print("\n=== 安装 Alpine VM v{s} ===\n", .{version});
+        std.debug.print("\n=== Installing Alpine VM v{s} ===\n", .{version});
+
+        // TODO: Actual Alpine VM download URL needs to be confirmed
+        std.debug.print("Note: Alpine VM download URL not yet available\n", .{});
+        std.debug.print("Skipping Alpine VM installation (demo mode)\n", .{});
+        _ = self;
+        return;
 
         // 构建下载 URL（使用中国镜像）
-        const arch_str = if (self.ctx.platform.arch == .arm64) "arm64" else "x86_64";
-        const url = try std.fmt.allocPrint(
-            self.ctx.allocator,
-            "https://mirrors.tuna.tsinghua.edu.cn/asyuvi/releases/v0.12.1/asyuvi-alpine-{s}-0.12.0-minimal-20260117.tar.gz",
-            .{arch_str},
-        );
-        defer self.ctx.allocator.free(url);
+        // const arch_str = if (self.ctx.platform.arch == .arm64) "arm64" else "x86_64";
+        // const url = try std.fmt.allocPrint(
+        //     self.ctx.allocator,
+        //     "https://mirrors.tuna.tsinghua.edu.cn/asyuvi/releases/v0.12.1/asyuvi-alpine-{s}-0.12.0-minimal-20260117.tar.gz",
+        //     .{arch_str},
+        // );
+        // defer self.ctx.allocator.free(url);
 
-        const archive_path = try std.fmt.allocPrint(
-            self.ctx.allocator,
-            "{s}/alpine-vm.tar.gz",
-            .{self.ctx.temp_dir},
-        );
-        defer self.ctx.allocator.free(archive_path);
+        // const archive_path = try std.fmt.allocPrint(
+        //     self.ctx.allocator,
+        //     "{s}/alpine-vm.tar.gz",
+        //     .{self.ctx.temp_dir},
+        // );
+        // defer self.ctx.allocator.free(archive_path);
 
-        // 下载
-        std.debug.print("下载 Alpine VM 镜像...\n", .{});
-        try self.ctx.downloader.download(.{
-            .url = url,
-            .dest_path = archive_path,
-            .show_progress = true,
-        });
+        // // 下载
+        // std.debug.print("Downloading Alpine VM image...\n", .{});
+        // try self.ctx.downloader.download(.{
+        //     .url = url,
+        //     .dest_path = archive_path,
+        //     .show_progress = true,
+        // });
 
-        // 解压到 ~/.asyuvi/vm
-        const home = std.posix.getenv("HOME") orelse return error.HomeNotSet;
-        const vm_dir = try std.fmt.allocPrint(self.ctx.allocator, "{s}/.asyuvi/vm", .{home});
-        defer self.ctx.allocator.free(vm_dir);
+        // // 解压到 ~/.asyuvi/vm
+        // const home = std.posix.getenv("HOME") orelse return error.HomeNotSet;
+        // const vm_dir = try std.fmt.allocPrint(self.ctx.allocator, "{s}/.asyuvi/vm", .{home});
+        // defer self.ctx.allocator.free(vm_dir);
 
-        try archive.extractTarGz(self.ctx.allocator, archive_path, vm_dir);
+        // try archive.extractTarGz(self.ctx.allocator, archive_path, vm_dir);
 
-        std.debug.print("✓ Alpine VM 安装完成\n", .{});
+        // std.debug.print("✓ Alpine VM installation complete\n", .{});
     }
 
     /// 安装 asYuvi
     pub fn installAsYuvi(self: *Installer, version: []const u8) !void {
-        std.debug.print("\n=== 安装 asYuvi v{s} ===\n", .{version});
+        std.debug.print("\n=== Installing asYuvi v{s} ===\n", .{version});
 
         // 构建下载 URL
         const platform_id = self.ctx.platform.getIdentifier();
@@ -147,11 +153,11 @@ pub const Installer = struct {
         defer self.ctx.allocator.free(archive_path);
 
         // 下载
-        std.debug.print("下载 asYuvi...\n", .{});
-        std.debug.print("注意: 这是模拟下载，实际 URL 可能需要调整\n", .{});
+        std.debug.print("Downloading asYuvi...\n", .{});
+        std.debug.print("Note: This is a simulated download, actual URL may need adjustment\n", .{});
 
         // TODO: 实际下载（现在跳过因为 URL 可能不存在）
-        std.debug.print("跳过下载（演示模式）\n", .{});
+        std.debug.print("Skipping download (demo mode)\n", .{});
 
         // 以下代码在实际下载成功后执行
         // const home = std.posix.getenv("HOME") orelse return error.HomeNotSet;
@@ -167,7 +173,7 @@ pub const Installer = struct {
             return;
         }
 
-        std.debug.print("\n=== 启动 Lima VM ===\n", .{});
+        std.debug.print("\n=== Starting Lima VM ===\n", .{});
 
         const home = std.posix.getenv("HOME") orelse return error.HomeNotSet;
         const limactl = try std.fmt.allocPrint(self.ctx.allocator, "{s}/.lima/bin/limactl", .{home});
@@ -175,7 +181,7 @@ pub const Installer = struct {
 
         // 检查 limactl 是否存在
         if (!archive.fileExists(limactl)) {
-            std.debug.print("错误: limactl 未找到，请先安装 Lima\n", .{});
+            std.debug.print("Error: limactl not found, please install Lima first\n", .{});
             return error.LimaNotInstalled;
         }
 
@@ -184,19 +190,19 @@ pub const Installer = struct {
             .allocator = self.ctx.allocator,
             .argv = &[_][]const u8{ limactl, "list", "-q" },
         }) catch {
-            std.debug.print("无法检查 Lima VM 状态\n", .{});
+            std.debug.print("Cannot check Lima VM status\n", .{});
             return;
         };
         defer self.ctx.allocator.free(check_result.stdout);
         defer self.ctx.allocator.free(check_result.stderr);
 
         if (std.mem.indexOf(u8, check_result.stdout, "asYuvi") != null) {
-            std.debug.print("asYuvi VM 已存在\n", .{});
+            std.debug.print("asYuvi VM already exists\n", .{});
             return;
         }
 
-        std.debug.print("提示: 需要手动创建和启动 Lima VM\n", .{});
-        std.debug.print("运行: limactl start ~/.asyuvi/vm/asYuvi.yaml\n", .{});
+        std.debug.print("Tip: You need to manually create and start Lima VM\n", .{});
+        std.debug.print("Run: limactl start ~/.asyuvi/vm/asYuvi.yaml\n", .{});
     }
 
     fn checkLimaInstalled(self: *Installer) bool {
